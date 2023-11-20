@@ -129,9 +129,9 @@
      "data": {
       "text/plain": [
        "((array([0, 1, 2, 3, 5, 7], dtype=object),\n",
-       "  array([  1,   1, 100, 400, 800, 800])),\n",
+       "  array([  1,   1, 100, 400, 800, 800], dtype=int64)),\n",
        " (array([0, 1, 2, 3, 5, 7], dtype=object),\n",
-       "  array([100, 100, 100, 100, 100, 100])))"
+       "  array([100, 100, 100, 100, 100, 100], dtype=int64)))"
       ]
      },
      "execution_count": 5,
@@ -152,7 +152,7 @@
     {
      "data": {
       "text/plain": [
-       "array([2, 0, 3, ..., 5, 5, 5])"
+       "array([2, 0, 3, ..., 5, 5, 5], dtype=int64)"
       ]
      },
      "execution_count": 6,
@@ -215,7 +215,7 @@
     {
      "data": {
       "text/plain": [
-       "43.79921259842519"
+       "(2102, 784)"
       ]
      },
      "execution_count": 9,
@@ -224,13 +224,13 @@
     }
    ],
    "source": [
-    "normed_train_x = sklearn.preprocessing.normalize(train_x, norm = 'max', axis = 1)\n",
-    "np.sum(normed_train_x[3])"
+    "normed_train_x = sklearn.preprocessing.normalize(train_x, norm = 'l1', axis = 1)\n",
+    "normed_train_x.shape"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 10,
    "id": "a63e740f",
    "metadata": {},
    "outputs": [],
@@ -249,22 +249,22 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 11,
    "id": "1dd2de5c",
    "metadata": {},
    "outputs": [],
    "source": [
     "mlp_hyperparameter_grid = dict(\n",
-    "    hidden_layer_sizes = [64],\n",
+    "    hidden_layer_sizes = [32, 64, 128],\n",
     "    random_state = [101],\n",
-    "    batch_size= [50, 100, 500],\n",
-    "    learning_rate_init=[0.001, 0.005, 0.0005], \n",
+    "    batch_size= [5, 100, 1000],\n",
+    "    learning_rate_init=[0.005, 0.0001, 0.0005], #[0.001, 0.005, 0.0001, 0.0005], \n",
     "    )"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 12,
    "id": "03d7eebd",
    "metadata": {},
    "outputs": [
@@ -274,7 +274,7 @@
        "((600,), (2102,))"
       ]
      },
-     "execution_count": 13,
+     "execution_count": 12,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -294,7 +294,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 13,
    "id": "b98bedf2",
    "metadata": {},
    "outputs": [],
@@ -309,7 +309,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 14,
    "id": "984621c1",
    "metadata": {},
    "outputs": [],
@@ -325,10 +325,19 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 95,
+   "execution_count": null,
    "id": "a2aae68b",
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\Owner\\envs\\cs135_env\\lib\\site-packages\\sklearn\\neural_network\\_multilayer_perceptron.py:686: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (2000) reached and the optimization hasn't converged yet.\n",
+      "  warnings.warn(\n"
+     ]
+    }
+   ],
    "source": [
     "start_time_sec = time.time()\n",
     "mlp_searcher.fit(normed_train_x, train_y)\n",
@@ -343,7 +352,7 @@
    "outputs": [],
    "source": [
     "mlp_searcher_result = pd.DataFrame(mlp_searcher.cv_results_).copy()\n",
-    "[mlp_searcher_result.mean_test_score, mlp_searcher_result.params]"
+    "mlp_searcher_result"
    ]
   },
   {
@@ -355,49 +364,6 @@
    "source": [
     "mlp_searcher.best_params_"
    ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-<<<<<<< HEAD
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "best_mlp = mlp # TODO call set_params using the best_params_ found by your searcher\n",
-    "best_param = mlp_searcher.best_params_\n",
-    "best_mlp.set_params(**best_param)\n",
-    "best_mlp.fit(train_x, train_y)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "normed_valid_x = sklearn.preprocessing.normalize(valid_x, norm = 'l1', axis = 1)\n",
-    "\n",
-    "pred_y = best_mlp.predict(normed_valid_x)\n",
-    "best_mlp_BAcc = balanced_accuracy_score(pred_y, valid_y)\n",
-    "best_mlp_BAcc"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-=======
-   "id": "038ef67b",
->>>>>>> main
-   "metadata": {},
-   "outputs": [],
-   "source": []
   }
  ],
  "metadata": {
